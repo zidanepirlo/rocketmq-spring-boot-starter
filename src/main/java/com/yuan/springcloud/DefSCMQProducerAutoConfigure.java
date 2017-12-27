@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnClass(DefSCMQProducer.class)
 @EnableConfigurationProperties(RocketMQProducerProperties.class)
+@ConditionalOnProperty(prefix = "rocketmq.producer",value = "enabled",havingValue = "true")
 public class DefSCMQProducerAutoConfigure {
 
     private final Logger logger = Logger.getLogger(getClass());
@@ -21,7 +22,7 @@ public class DefSCMQProducerAutoConfigure {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = "rocketmq.producer",value = "enabled",havingValue = "true")
+//    @ConditionalOnProperty(prefix = "rocketmq.producer",value = "enabled",havingValue = "true")
     DefSCMQProducer defSCMQProducer(){
         return new DefSCMQProducerImpl(rocketMQProducerProperties);
     }
