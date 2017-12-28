@@ -1,13 +1,11 @@
-package com.yuan.springcloud;
+package com.yuan.springcloud.Interface.Impl;
 
+import com.yuan.springcloud.Interface.DefSCMQProducer;
+import com.yuan.springcloud.properties.RocketMQDefProducerProperties;
 import org.apache.log4j.Logger;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
 import javax.annotation.PostConstruct;
@@ -15,18 +13,16 @@ import javax.annotation.PreDestroy;
 import javax.inject.Singleton;
 
 
-public class DefSCMQProducerImpl implements DefSCMQProducer
-//        ,InitializingBean,DisposableBean
-{
+public class DefSCMQProducerImpl implements DefSCMQProducer {
 
     protected final Logger logger = Logger.getLogger(getClass());
 
-    private RocketMQProducerProperties rocketMQProducerProperties;
+    private RocketMQDefProducerProperties rocketMQProducerProperties;
 
     private DefaultMQProducer producer;
 
 
-    public DefSCMQProducerImpl(RocketMQProducerProperties rocketMQProducerProperties) {
+    public DefSCMQProducerImpl(RocketMQDefProducerProperties rocketMQProducerProperties) {
         this.rocketMQProducerProperties = rocketMQProducerProperties;
     }
 

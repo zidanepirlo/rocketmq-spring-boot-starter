@@ -1,4 +1,4 @@
-package com.yuan.springcloud;
+package com.yuan.springcloud.Interface;
 
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;

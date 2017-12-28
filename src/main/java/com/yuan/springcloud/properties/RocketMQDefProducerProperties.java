@@ -1,4 +1,4 @@
-package com.yuan.springcloud;
+package com.yuan.springcloud.properties;
 
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -6,10 +6,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 
-@ConfigurationProperties("rocketmq.producer")
+@ConfigurationProperties("rocketmq.producer.defProducer")
 @Getter
 @Setter
-public class RocketMQProducerProperties {
+public class RocketMQDefProducerProperties {
 
     private String producerGroup;
     private String namesrvAddr;

@@ -1,8 +1,9 @@
 package com.yuan.springcloud;
 
-import com.yuan.springcloud.Interface.DefSCMQProducer;
-import com.yuan.springcloud.Interface.Impl.DefSCMQProducerImpl;
-import com.yuan.springcloud.properties.RocketMQDefProducerProperties;
+
+import com.yuan.springcloud.Interface.DefSCMQPushConsumerConcurrently;
+import com.yuan.springcloud.Interface.Impl.DefSCMQPushConsumerConcurrentlyImpl;
+import com.yuan.springcloud.properties.RocketMQDefPushConsumerProperties;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -12,24 +13,24 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+
 @Configuration
-@ConditionalOnClass(DefSCMQProducer.class)
+@ConditionalOnClass(DefSCMQPushConsumerConcurrently.class)
 //@ConditionalOnClass({ DefSCMQProducer.class,
 //        DefSCMQPushConsumerConcurrently.class })
-@EnableConfigurationProperties(RocketMQDefProducerProperties.class)
-@ConditionalOnProperty(prefix = "rocketmq.producer.defProducer",value = "enabled",havingValue = "true")
-public class DefSCMQProducerAutoConfigure {
+@EnableConfigurationProperties(RocketMQDefPushConsumerProperties.class)
+@ConditionalOnProperty(prefix = "rocketmq.consumer.defPushConsumer",value = "enabled",havingValue = "true")
+
+public class DefSCMQPushConsumerAutoConfigure {
 
     private final Logger logger = Logger.getLogger(getClass());
 
     @Autowired
-    private RocketMQDefProducerProperties rocketMQDefProducerProperties;
+    private RocketMQDefPushConsumerProperties rocketMQDefPushConsumerProperties;
 
     @Bean
     @ConditionalOnMissingBean
-//    @ConditionalOnProperty(prefix = "rocketmq.producer",value = "enabled",havingValue = "true")
-    DefSCMQProducer defSCMQProducer(){
-        return new DefSCMQProducerImpl(rocketMQDefProducerProperties);
+    DefSCMQPushConsumerConcurrently defSCMQPushConsumerConcurrently(){
+        return new DefSCMQPushConsumerConcurrentlyImpl(rocketMQDefPushConsumerProperties);
     }
-
 }
