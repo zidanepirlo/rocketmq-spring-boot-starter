@@ -2,17 +2,18 @@ package com.yuan.springcloud.Interface.Impl;
 
 import com.yuan.springcloud.Interface.DefSCMQPushConsumerConcurrently;
 import com.yuan.springcloud.Interface.RbMsgConcurrentlyListener;
+import com.yuan.springcloud.Interface.RbMsgListener;
 import com.yuan.springcloud.entity.ConsumerMsg;
+import com.yuan.springcloud.enums.EListenerType;
 import com.yuan.springcloud.properties.RocketMQDefPushConsumerProperties;
 import org.apache.log4j.Logger;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
-import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
-import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
-import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
+import org.apache.rocketmq.client.consumer.listener.*;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 import org.springframework.context.annotation.Bean;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -76,33 +77,59 @@ public class DefSCMQPushConsumerConcurrentlyImpl implements DefSCMQPushConsumerC
         return consumer;
     }
 
-    public void startup(final RbMsgConcurrentlyListener rbMsgConcurrentlyListener) {
+    public void startup(final RbMsgListener rbMsgListener) {
 
-        consumer.registerMessageListener(new MessageListenerConcurrently() {
-            public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
+        if (StringUtils.isEmpty(rocketMQDefPushConsumerProperties.getListenerType())
+                || EListenerType.getByDesc(rocketMQDefPushConsumerProperties.getListenerType()) == EListenerType.CONCURRENTLY) {
 
-                try{
-                    List<ConsumerMsg> consumerMsgs = new ArrayList<ConsumerMsg>();
-                    for (MessageExt messageExt:msgs){
-                        consumerMsgs.add(new ConsumerMsg(messageExt.getTopic(),messageExt.getTags(),new String(messageExt.getBody())));
+            consumer.registerMessageListener(new MessageListenerConcurrently() {
+                public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
+
+                    try {
+                        List<ConsumerMsg> consumerMsgs = new ArrayList<ConsumerMsg>();
+                        for (MessageExt messageExt : msgs) {
+                            consumerMsgs.add(new ConsumerMsg(messageExt.getTopic(), messageExt.getTags(), new String(messageExt.getBody())));
+                        }
+                        if (consumerMsgs != null || consumerMsgs.size() > 0) {
+                            rbMsgListener.consumeMessage(consumerMsgs);
+                        }
+                    } catch (Exception ex) {
+                        logger.error(ex.getMessage(), ex);
+                        return ConsumeConcurrentlyStatus.RECONSUME_LATER;
                     }
-                    if (consumerMsgs !=null || consumerMsgs.size()>0 ){
-                        rbMsgConcurrentlyListener.consumeMessage(consumerMsgs);
-                    }
-                }catch (Exception ex){
-                    logger.error(ex.getMessage(),ex);
-                    return ConsumeConcurrentlyStatus.RECONSUME_LATER;
+
+                    return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
                 }
+            });
+        } else if (EListenerType.getByDesc(rocketMQDefPushConsumerProperties.getListenerType()) == EListenerType.ORDERLY) {
+            consumer.registerMessageListener(new MessageListenerOrderly(){
+                public ConsumeOrderlyStatus consumeMessage(List<MessageExt> msgs, ConsumeOrderlyContext context) {
 
-                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
-            }
-        });
+                    try {
+                        List<ConsumerMsg> consumerMsgs = new ArrayList<ConsumerMsg>();
+                        for (MessageExt messageExt : msgs) {
+                            consumerMsgs.add(new ConsumerMsg(messageExt.getTopic(), messageExt.getTags(), new String(messageExt.getBody())));
+                        }
+                        if (consumerMsgs != null || consumerMsgs.size() > 0) {
+                            rbMsgListener.consumeMessage(consumerMsgs);
+                        }
+                    } catch (Exception ex) {
+                        logger.error(ex.getMessage(), ex);
+                        return ConsumeOrderlyStatus.SUSPEND_CURRENT_QUEUE_A_MOMENT;
+                    }
+                    return ConsumeOrderlyStatus.SUCCESS;
+                }
+            });
+        } else {
+            logger.error("DefaultMQPushConsumer init failed, not set Listener");
+            System.exit(0);
+        }
 
-        try{
+        try {
             consumer.start();
-        }catch (Exception ex){
-            logger.error(ex.getMessage(),ex);
-            System.exit(1);
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+            System.exit(0);
         }
         logger.info("DefaultMQPushConsumer start");
     }

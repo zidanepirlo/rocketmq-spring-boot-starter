@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface DefSCMQPushConsumerConcurrently {
 
-    void startup(final RbMsgConcurrentlyListener rbMsgConcurrentlyListener);
+    void startup(final RbMsgListener rbMsgListener);
 }

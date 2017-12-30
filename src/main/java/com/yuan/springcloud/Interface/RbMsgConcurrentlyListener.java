@@ -5,7 +5,6 @@ import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 
 import java.util.List;
 
-public interface RbMsgConcurrentlyListener {
+public interface RbMsgConcurrentlyListener extends  RbMsgListener{
 
-    void consumeMessage(final List<ConsumerMsg> consumerMsgs);
 }

@@ -18,4 +18,5 @@ public class RocketMQDefPushConsumerProperties {
     private String consumeMessageBatchMaxSize;
     private String maxReconsumeTimes;
     private String messageModel;
+    private String listenerType;
 }

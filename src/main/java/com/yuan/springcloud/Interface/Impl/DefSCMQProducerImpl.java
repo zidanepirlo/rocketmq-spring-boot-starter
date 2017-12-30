@@ -54,8 +54,12 @@ public class DefSCMQProducerImpl implements DefSCMQProducer {
     public void afterPropertiesSet() throws Exception {
         logger.info("DefSCMQProducerImpl init");
         producer = this.getProducer();
-        if (null == producer)
-            throw new Exception("DefaultMQProducer init fail!");
+        if (null == producer){
+            //throw new Exception("DefaultMQProducer init fail!");
+            logger.error("DefaultMQProducer init fail!");
+            System.exit(1);
+        }
+
         producer.start();
         logger.info("DefSCMQProducerImpl init end");
     }
