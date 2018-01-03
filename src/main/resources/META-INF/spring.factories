@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.yuan.springcloud.DefSCMQProducerAutoConfigure,com.yuan.springcloud.DefSCMQPushConsumerAutoConfigure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.yuan.springcloud.DefSCMQProducerAutoConfigure,com.yuan.springcloud.DefSCMQPushConsumerAutoConfigure

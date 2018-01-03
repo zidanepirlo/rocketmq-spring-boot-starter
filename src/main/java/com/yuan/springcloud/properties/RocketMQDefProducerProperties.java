@@ -16,4 +16,5 @@ public class RocketMQDefProducerProperties {
     private String instanceName;
     private String topic;
     private String tags;
+    private String enabled;
 }
